@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔥 Rosie's Prompt Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════════ */
+:root {
+  --black:   #080808;
+  --dark:    #0f0f0f;
+  --panel:   #141414;
+  --card:    #181818;
+  --card2:   #1e1e1e;
+  --border:  #282828;
+  --border2: #363636;
+
+  --red:     #e63946;
+  --red-dim: rgba(230,57,70,0.12);
+  --gold:    #f4a918;
+  --gold-dim:rgba(244,169,24,0.12);
+  --teal:    #06d6a0;
+  --teal-dim:rgba(6,214,160,0.12);
+  --purple:  #9d4edd;
+  --pur-dim: rgba(157,78,221,0.12);
+  --orange:  #ff6f3c;
+  --ora-dim: rgba(255,111,60,0.12);
+  --blue:    #4895ef;
+  --blu-dim: rgba(72,149,239,0.12);
+
+  --text:    #e0dbd0;
+  --text-dim:#7a7870;
+  --text-mid:#aaa89f;
+  --cream:   #f0ece3;
+  --white:   #f5f2ec;
+
+  --ff-display: 'Bebas Neue', sans-serif;
+  --ff-serif:   'Playfair Display', serif;
+  --ff-body:    'Barlow', sans-serif;
+  --ff-mono:    'Courier Prime', monospace;
+
+  --sidebar-w: 252px;
+  --transition: 0.18s ease;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--ff-body);
+  background:var(--black);
+  color:var(--text);
+  display:flex;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* scanline */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.025) 3px,rgba(0,0,0,0.025) 4px);
+}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--black);}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:3px;}
+
+/* ═══════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════ */
+.sidebar{
+  width:var(--sidebar-w);
+  min-height:100vh;
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;
+  overflow-y:auto;flex-shrink:0;
+}
+
+.sb-brand{
+  padding:22px 18px 16px;
+  border-bottom:1px solid var(--border);
+}
+.sb-logo{
+  font-family:var(--ff-display);
+  font-size:26px;letter-spacing:0.05em;line-height:1;
+  background:linear-gradient(135deg,var(--red),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.sb-sub{
+  font-size:9px;color:var(--text-dim);text-transform:uppercase;
+  letter-spacing:0.18em;margin-top:3px;font-weight:600;
+}
+.sb-status{
+  display:flex;align-items:center;gap:6px;
+  margin-top:9px;font-size:10px;color:var(--teal);font-weight:700;
+}
+.sb-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--teal);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.75);}}
+
+.sb-section{
+  padding:18px 18px 5px;
+  font-size:8.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.22em;color:var(--text-dim);
+}
+
+.sb-item{
+  display:flex;align-items:center;gap:9px;
+  padding:7px 18px;
+  font-size:12.5px;color:var(--text-mid);
+  border-left:2px solid transparent;
+  cursor:pointer;transition:all var(--transition);
+  text-decoration:none;
+}
+.sb-item:hover{color:var(--white);background:rgba(255,255,255,0.04);border-left-color:var(--border2);}
+.sb-item.active{color:var(--white);background:var(--red-dim);border-left-color:var(--red);font-weight:600;}
+.sb-item .ico{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+
+.sb-hr{border:none;border-top:1px solid var(--border);margin:10px 18px;}
+
+/* category nav pills */
+.sb-cats{padding:10px 14px 14px;}
+.sb-cat-label{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;color:var(--text-dim);margin-bottom:7px;}
+.cat-pill{
+  display:flex;align-items:center;gap:7px;
+  padding:6px 10px;border-radius:4px;
+  font-size:12px;font-weight:600;
+  cursor:pointer;margin-bottom:3px;
+  transition:all var(--transition);
+  border:1px solid transparent;
+}
+.cat-pill:hover{border-color:var(--border2);background:rgba(255,255,255,0.04);}
+.cat-pill.active-cat{border-color:currentColor;background:rgba(255,255,255,0.06);}
+.cat-pill .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+.sb-footer{
+  margin-top:auto;
+  padding:14px 18px 18px;
+  border-top:1px solid var(--border);
+  font-family:var(--ff-mono);
+  font-size:10.5px;color:var(--text-dim);
+  font-style:italic;line-height:1.55;
+}
+.sb-footer span{display:block;color:var(--gold);font-style:normal;font-size:9.5px;margin-top:5px;font-weight:700;}
+
+/* ═══════════════════════════════════════════════
+   MAIN
+═══════════════════════════════════════════════ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ─── TOP BAR ─── */
+.topbar{
+  height:52px;
+  background:var(--panel);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:0 36px;
+  gap:16px;
+  position:sticky;top:0;z-index:100;
+  flex-shrink:0;
+}
+.topbar-title{
+  font-family:var(--ff-display);
+  font-size:20px;letter-spacing:0.06em;color:var(--white);
+}
+.topbar-sep{color:var(--border2);}
+.topbar-page{font-size:13px;color:var(--text-dim);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.topbar-search{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:5px 12px;
+  font-size:12px;color:var(--text);
+  font-family:var(--ff-body);
+  width:200px;
+  transition:border-color var(--transition);
+}
+.topbar-search::placeholder{color:var(--text-dim);}
+.topbar-search:focus{outline:none;border-color:var(--red);}
+.topbar-btn{
+  background:var(--red);color:white;
+  border:none;border-radius:3px;
+  padding:5px 14px;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.08em;
+  cursor:pointer;font-family:var(--ff-body);
+  transition:all var(--transition);
+}
+.topbar-btn:hover{background:#c62d3a;}
+
+/* ─── CONTENT AREA ─── */
+.content{
+  flex:1;overflow-y:auto;
+  padding:36px 40px 80px;
+  max-width:1080px;
+  width:100%;
+  margin:0 auto;
+}
+
+/* ═══════════════════════════════════════════════
+   HOME VIEW
+═══════════════════════════════════════════════ */
+.home-hero{
+  position:relative;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:8px;
+  overflow:hidden;
+  padding:36px 40px;
+  margin-bottom:28px;
+}
+.home-hero::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 50% 100% at 0% 50%,rgba(230,57,70,0.15) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 80% at 100% 20%,rgba(244,169,24,0.1) 0%,transparent 60%);
+  pointer-events:none;
+}
+.home-hero-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(230,57,70,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(230,57,70,0.05) 1px,transparent 1px);
+  background-size:32px 32px;
+}
+.home-hero-inner{position:relative;z-index:1;}
+.home-eyebrow{
+  font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.25em;color:var(--red);
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+.home-eyebrow::before{content:'';display:block;width:20px;height:1px;background:var(--red);}
+.home-title{
+  font-family:var(--ff-display);
+  font-size:58px;line-height:0.92;letter-spacing:0.02em;
+  color:var(--white);margin-bottom:12px;
+}
+.home-title .r{color:var(--red);}
+.home-title .g{color:var(--gold);}
+.home-subtitle{
+  font-size:14px;color:var(--text-mid);
+  font-family:var(--ff-serif);font-style:italic;
+  max-width:560px;line-height:1.6;
+}
+.home-floaters{
+  position:absolute;right:32px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:8px;align-items:center;
+  font-size:28px;opacity:0.2;
+}
+.home-floaters span{animation:roam 6s ease-in-out infinite;}
+.home-floaters span:nth-child(2){animation-delay:0.8s;font-size:22px;}
+.home-floaters span:nth-child(3){animation-delay:1.6s;font-size:34px;}
+@keyframes roam{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-8px) rotate(4deg);}}
+
+/* stats */
+.stats-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  gap:10px;margin-bottom:28px;
+}
+.stat-box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:6px;padding:14px 16px;
+  position:relative;overflow:hidden;
+  transition:transform var(--transition),border-color var(--transition);
+}
+.stat-box:hover{transform:translateY(-2px);border-color:var(--border2);}
+.stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.stat-box:nth-child(1)::before{background:var(--red);}
+.stat-box:nth-child(2)::before{background:var(--gold);}
+.stat-box:nth-child(3)::before{background:var(--teal);}
+.stat-box:nth-child(4)::before{background:var(--purple);}
+.stat-box:nth-child(5)::before{background:var(--orange);}
+.stat-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:var(--text-dim);margin-bottom:6px;}
+.stat-val{font-family:var(--ff-display);font-size:32px;color:var(--white);line-height:1;}
+.stat-note{font-size:10px;color:var(--text-dim);margin-top:3px;font-style:italic;}
+
+/* category overview cards */
+.cat-overview{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:12px;margin-bottom:28px;
+}
+.cat-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:6px;padding:20px 22px;
+  cursor:pointer;transition:all var(--transition);
+  position:relative;overflow:hidden;
+}
+.cat-card::before{
+  content:'';position:absolute;
+  top:0;left:0;bottom:0;width:3px;
+}
+.cat-card:hover{border-color:var(--border2);transform:translateX(3px);}
+.cat-card.wc::before{background:var(--red);}
+.cat-card.bs::before{background:var(--gold);}
+.cat-card.lr::before{background:var(--teal);}
+.cat-card.cb::before{background:var(--purple);}
+.cat-card:hover.wc{box-shadow:-3px 0 0 var(--red);}
+.cat-card:hover.bs{box-shadow:-3px 0 0 var(--gold);}
+.cat-card:hover.lr{box-shadow:-3px 0 0 var(--teal);}
+.cat-card:hover.cb{box-shadow:-3px 0 0 var(--purple);}
+.cc-icon{font-size:26px;margin-bottom:8px;}
+.cc-name{font-family:var(--ff-display);font-size:20px;letter-spacing:0.04em;color:var(--white);margin-bottom:4px;}
+.cc-desc{font-size:12px;color:var(--text-dim);line-height:1.5;}
+.cc-count{
+  position:absolute;top:16px;right:16px;
+  font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.1em;padding:2px 8px;border-radius:2px;
+}
+.wc .cc-count{background:var(--red-dim);color:var(--red);}
+.bs .cc-count{background:var(--gold-dim);color:var(--gold);}
+.lr .cc-count{background:var(--teal-dim);color:var(--teal);}
+.cb .cc-count{background:var(--pur-dim);color:var(--purple);}
+
+/* ═══════════════════════════════════════════════
+   SECTION HEADERS
+═══════════════════════════════════════════════ */
+.section-head{
+  display:flex;align-items:center;gap:12px;
+  margin:32px 0 16px;
+}
+.section-head h2{
+  font-family:var(--ff-display);font-size:28px;
+  letter-spacing:0.04em;color:var(--white);white-space:nowrap;
+}
+.sh-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent);}
+.sh-tag{
+  font-size:8.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.15em;color:var(--red);
+  border:1px solid var(--red);padding:2px 8px;border-radius:2px;
+  white-space:nowrap;
+}
+.sh-count{
+  font-size:11px;color:var(--text-dim);
+  font-family:var(--ff-mono);white-space:nowrap;
+}
+
+/* ═══════════════════════════════════════════════
+   CALLOUTS
+═══════════════════════════════════════════════ */
+.callout{
+  display:flex;gap:13px;padding:14px 17px;
+  border-radius:4px;margin-bottom:12px;
+  border-left:3px solid;
+}
+.callout.red   {background:var(--red-dim); border-color:var(--red);}
+.callout.gold  {background:var(--gold-dim);border-color:var(--gold);}
+.callout.teal  {background:var(--teal-dim);border-color:var(--teal);}
+.callout.purple{background:var(--pur-dim); border-color:var(--purple);}
+.callout-ico{font-size:18px;flex-shrink:0;margin-top:1px;}
+.callout-txt{font-size:13px;line-height:1.65;color:var(--text);}
+.callout-txt strong{color:var(--white);font-weight:700;}
+.callout-txt em{color:var(--text-dim);font-style:italic;}
+
+/* ═══════════════════════════════════════════════
+   PROMPT CARDS
+═══════════════════════════════════════════════ */
+.prompt-grid{display:flex;flex-direction:column;gap:10px;}
+
+.p-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:5px;overflow:hidden;
+  transition:all var(--transition);
+  animation:fadeUp 0.35s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.p-card:nth-child(1){animation-delay:.04s}
+.p-card:nth-child(2){animation-delay:.08s}
+.p-card:nth-child(3){animation-delay:.12s}
+.p-card:nth-child(4){animation-delay:.16s}
+.p-card:nth-child(5){animation-delay:.20s}
+.p-card:nth-child(6){animation-delay:.24s}
+.p-card:nth-child(7){animation-delay:.28s}
+.p-card:nth-child(8){animation-delay:.32s}
+
+.p-card:hover{border-color:var(--border2);}
+
+/* accent variants */
+.p-card.wc:hover{box-shadow:-3px 0 0 var(--red);}
+.p-card.bs:hover{box-shadow:-3px 0 0 var(--gold);}
+.p-card.lr:hover{box-shadow:-3px 0 0 var(--teal);}
+.p-card.cb:hover{box-shadow:-3px 0 0 var(--purple);}
+
+.p-header{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;cursor:pointer;
+  border-bottom:1px solid transparent;
+  transition:border-color var(--transition);
+  user-select:none;
+}
+.p-card.open .p-header{border-bottom-color:var(--border);}
+
+.p-num{
+  font-family:var(--ff-display);font-size:22px;
+  width:28px;text-align:center;flex-shrink:0;
+  line-height:1;
+}
+.p-card.wc .p-num{color:var(--red);}
+.p-card.bs .p-num{color:var(--gold);}
+.p-card.lr .p-num{color:var(--teal);}
+.p-card.cb .p-num{color:var(--purple);}
+
+.p-meta{flex:1;min-width:0;}
+.p-title{
+  font-size:13.5px;font-weight:700;color:var(--white);
+  display:flex;align-items:center;gap:7px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.p-title .p-emoji{flex-shrink:0;}
+.p-sub{font-size:11px;color:var(--text-dim);font-style:italic;margin-top:1px;}
+
+.p-tags{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;}
+.p-tag{
+  font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.08em;padding:2px 7px;border-radius:2px;
+  border:1px solid;white-space:nowrap;
+}
+.tag-music {color:#f4a918;border-color:#f4a918;background:rgba(244,169,24,0.1);}
+.tag-content{color:#06d6a0;border-color:#06d6a0;background:rgba(6,214,160,0.1);}
+.tag-brand  {color:#9d4edd;border-color:#9d4edd;background:rgba(157,78,221,0.1);}
+.tag-shop   {color:#ff6f3c;border-color:#ff6f3c;background:rgba(255,111,60,0.1);}
+.tag-all    {color:#4895ef;border-color:#4895ef;background:rgba(72,149,239,0.1);}
+
+.p-toggle{font-size:10px;color:var(--text-dim);transition:transform var(--transition);flex-shrink:0;}
+.p-card.open .p-toggle{transform:rotate(180deg);}
+
+.p-body{display:none;padding:14px 16px 16px;}
+.p-card.open .p-body{display:block;}
+
+.prompt-lbl{
+  font-size:8.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.18em;margin-bottom:7px;
+}
+.p-card.wc .prompt-lbl{color:var(--red);}
+.p-card.bs .prompt-lbl{color:var(--gold);}
+.p-card.lr .prompt-lbl{color:var(--teal);}
+.p-card.cb .prompt-lbl{color:var(--purple);}
+
+.prompt-box{
+  background:var(--dark);
+  border:1px solid var(--border);border-radius:4px;
+  padding:13px 15px;padding-right:88px;
+  font-family:var(--ff-mono);font-size:12px;
+  line-height:1.75;color:var(--cream);
+  position:relative;white-space:pre-wrap;
+  word-break:break-word;
+}
+.bracket{color:var(--gold);font-weight:700;}
+
+.copy-btn{
+  position:absolute;top:9px;right:9px;
+  background:var(--border);border:1px solid var(--border2);
+  border-radius:3px;padding:3px 9px;
+  font-size:9.5px;font-weight:700;cursor:pointer;
+  color:var(--text-dim);font-family:var(--ff-body);
+  text-transform:uppercase;letter-spacing:0.05em;
+  transition:all var(--transition);
+}
+.copy-btn:hover{background:var(--red);color:white;border-color:var(--red);}
+.copy-btn.copied{background:var(--teal);color:var(--black);border-color:var(--teal);}
+
+.why-row{
+  display:flex;gap:9px;align-items:flex-start;
+  margin-top:10px;
+}
+.why-tag{
+  flex-shrink:0;font-size:8.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.1em;
+  padding:2px 7px;border-radius:2px;border:1px solid;
+  margin-top:3px;
+}
+.p-card.wc .why-tag{color:var(--red);border-color:var(--red);background:var(--red-dim);}
+.p-card.bs .why-tag{color:var(--gold);border-color:var(--gold);background:var(--gold-dim);}
+.p-card.lr .why-tag{color:var(--teal);border-color:var(--teal);background:var(--teal-dim);}
+.p-card.cb .why-tag{color:var(--purple);border-color:var(--purple);background:var(--pur-dim);}
+.why-txt{font-size:12.5px;color:var(--text-dim);font-style:italic;line-height:1.55;}
+
+/* ═══════════════════════════════════════════════
+   VIEWS (tab pages)
+═══════════════════════════════════════════════ */
+.view{display:none;}
+.view.active{display:block;}
+
+/* ═══════════════════════════════════════════════
+   FILTER BAR
+═══════════════════════════════════════════════ */
+.filter-bar{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:18px;flex-wrap:wrap;
+}
+.filter-btn{
+  background:transparent;border:1px solid var(--border2);
+  color:var(--text-dim);padding:5px 13px;
+  font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.08em;cursor:pointer;border-radius:3px;
+  font-family:var(--ff-body);transition:all var(--transition);
+}
+.filter-btn:hover{color:var(--white);border-color:var(--text-dim);}
+.filter-btn.active{background:var(--red);color:white;border-color:var(--red);}
+.filter-btn.gold-f.active{background:var(--gold);color:var(--black);border-color:var(--gold);}
+.filter-btn.teal-f.active{background:var(--teal);color:var(--black);border-color:var(--teal);}
+.filter-btn.pur-f.active{background:var(--purple);color:white;border-color:var(--purple);}
+.filter-sep{color:var(--border2);font-size:16px;}
+
+/* ═══════════════════════════════════════════════
+   ADD PROMPT MODAL
+═══════════════════════════════════════════════ */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.85);z-index:1000;
+  align-items:center;justify-content:center;
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:var(--card2);border:1px solid var(--border2);
+  border-radius:8px;padding:28px 32px;width:560px;max-width:95vw;
+  animation:fadeUp 0.25s ease both;
+}
+.modal-title{
+  font-family:var(--ff-display);font-size:24px;
+  letter-spacing:0.04em;color:var(--white);margin-bottom:20px;
+}
+.modal-row{margin-bottom:14px;}
+.modal-lbl{
+  font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.18em;color:var(--text-dim);margin-bottom:5px;
+}
+.modal-input,.modal-textarea,.modal-select{
+  width:100%;background:var(--dark);
+  border:1px solid var(--border2);border-radius:4px;
+  padding:9px 12px;font-size:13px;
+  color:var(--text);font-family:var(--ff-body);
+  transition:border-color var(--transition);
+}
+.modal-textarea{resize:vertical;min-height:100px;font-family:var(--ff-mono);font-size:12px;}
+.modal-input:focus,.modal-textarea:focus,.modal-select:focus{
+  outline:none;border-color:var(--red);
+}
+.modal-input::placeholder,.modal-textarea::placeholder{color:var(--text-dim);}
+.modal-select option{background:var(--card2);}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+.btn-cancel{
+  background:transparent;border:1px solid var(--border2);
+  color:var(--text-dim);padding:7px 18px;border-radius:3px;
+  font-size:11px;font-weight:700;text-transform:uppercase;
+  cursor:pointer;font-family:var(--ff-body);
+  transition:all var(--transition);
+}
+.btn-cancel:hover{color:var(--white);}
+.btn-save{
+  background:var(--red);border:none;color:white;
+  padding:7px 20px;border-radius:3px;
+  font-size:11px;font-weight:700;text-transform:uppercase;
+  cursor:pointer;font-family:var(--ff-body);
+  transition:all var(--transition);
+}
+.btn-save:hover{background:#c62d3a;}
+
+/* ═══════════════════════════════════════════════
+   DIVIDERS / MISC
+═══════════════════════════════════════════════ */
+.slash-div{
+  display:flex;align-items:center;gap:12px;
+  margin:28px 0;color:var(--text-dim);
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;
+}
+.slash-div::before,.slash-div::after{content:'';flex:1;height:1px;background:var(--border);}
+
+code{
+  font-family:var(--ff-mono);font-size:11px;
+  background:rgba(255,255,255,0.07);padding:1px 5px;
+  border-radius:2px;color:var(--gold);
+}
+
+.expand-all-btn{
+  background:transparent;border:1px solid var(--border2);
+  color:var(--text-dim);padding:4px 12px;
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.08em;cursor:pointer;border-radius:3px;
+  font-family:var(--ff-body);transition:all var(--transition);
+  white-space:nowrap;
+}
+.expand-all-btn:hover{background:var(--red);color:white;border-color:var(--red);}
+
+/* no-results */
+.no-results{
+  text-align:center;padding:48px 20px;
+  font-family:var(--ff-serif);font-style:italic;
+  font-size:16px;color:var(--text-dim);
+}
+
+/* footer */
+.page-footer{
+  margin-top:56px;padding-top:20px;
+  border-top:1px solid var(--border);
+}
+.footer-row{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+}
+.footer-logo{
+  font-family:var(--ff-display);font-size:22px;
+  background:linear-gradient(135deg,var(--red),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.footer-tag{font-family:var(--ff-serif);font-size:11px;color:var(--text-dim);font-style:italic;margin-top:2px;}
+.footer-flames{display:flex;gap:3px;}
+.footer-flames span{animation:flame 1.5s ease-in-out infinite;display:inline-block;font-size:14px;}
+.footer-flames span:nth-child(2){animation-delay:0.2s;}
+.footer-flames span:nth-child(3){animation-delay:0.4s;}
+.footer-flames span:nth-child(4){animation-delay:0.6s;}
+@keyframes flame{0%,100%{transform:scaleY(1);}50%{transform:scaleY(1.25);}}
+.footer-copy{
+  margin-top:14px;padding-top:14px;border-top:1px solid var(--border);
+  font-family:var(--ff-mono);font-size:10.5px;color:var(--text-dim);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+}
+
+/* responsive */
+@media(max-width:820px){
+  .sidebar{display:none;}
+  .content{padding:20px 18px 60px;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .cat-overview{grid-template-columns:1fr;}
+  .home-floaters{display:none;}
+  .home-title{font-size:40px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════ -->
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">ROSIE'S<br>COMMAND<br>CENTER</div>
+    <div class="sb-sub">Prompt Arsenal · 2026</div>
+    <div class="sb-status"><span class="sb-dot"></span>Locked & Loaded</div>
+  </div>
+
+  <div class="sb-section">Headquarters</div>
+  <a class="sb-item active" onclick="showView('home')" href="#">
+    <span class="ico">🏠</span>Dashboard Home
+  </a>
+  <a class="sb-item" onclick="showView('all')" href="#">
+    <span class="ico">⚡</span>All Prompts
+  </a>
+
+  <hr class="sb-hr">
+  <div class="sb-section">My Hustles</div>
+  <a class="sb-item" onclick="showView('music')" href="#">
+    <span class="ico">🎸</span>Music / Tour / Live
+  </a>
+  <a class="sb-item" onclick="showView('content')" href="#">
+    <span class="ico">🎬</span>Content Creation
+  </a>
+  <a class="sb-item" onclick="showView('brand')" href="#">
+    <span class="ico">🔥</span>Personal Brand / Social
+  </a>
+  <a class="sb-item" onclick="showView('shop')" href="#">
+    <span class="ico">🛒</span>Gumroad / Notion / Etsy
+  </a>
+
+  <hr class="sb-hr">
+  <div class="sb-section">Prompt Categories</div>
+
+  <div class="sb-cats">
+    <div class="cat-pill" style="color:var(--red)" onclick="showView('writing')">
+      <span class="dot" style="background:var(--red)"></span>Writing &amp; Copy
+    </div>
+    <div class="cat-pill" style="color:var(--gold)" onclick="showView('business')">
+      <span class="dot" style="background:var(--gold)"></span>Business &amp; Strategy
+    </div>
+    <div class="cat-pill" style="color:var(--teal)" onclick="showView('learning')">
+      <span class="dot" style="background:var(--teal)"></span>Learning &amp; Research
+    </div>
+    <div class="cat-pill" style="color:var(--purple)" onclick="showView('creative')">
+      <span class="dot" style="background:var(--purple)"></span>Creative &amp; Brainstorm
+    </div>
+  </div>
+
+  <hr class="sb-hr">
+  <div class="sb-section">Tools</div>
+  <a class="sb-item" onclick="openModal()" href="#">
+    <span class="ico">➕</span>Add New Prompt
+  </a>
+  <a class="sb-item" href="#">
+    <span class="ico">📤</span>Export Library
+  </a>
+
+  <div class="sb-footer">
+    "The cables don't care about your feelings. Neither does the algorithm. Show up anyway."
+    <span>— Rosie, probably at 3am</span>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     MAIN
+══════════════════════════════════════════ -->
+<div class="main">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-title">COMMAND CENTER</div>
+    <div class="topbar-sep">/</div>
+    <div class="topbar-page" id="topbar-page">Dashboard Home</div>
+    <div class="topbar-right">
+      <input class="topbar-search" type="text" placeholder="🔍 Search prompts..." oninput="searchPrompts(this.value)" id="searchInput">
+      <button class="topbar-btn" onclick="openModal()">+ Add Prompt</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content" id="mainContent">
+
+    <!-- ─── HOME VIEW ─── -->
+    <div class="view active" id="view-home">
+      <div class="home-hero">
+        <div class="home-hero-grid"></div>
+        <div class="home-hero-inner">
+          <div class="home-eyebrow">Prompt Command Center · 2026</div>
+          <div class="home-title">
+            YOUR<br><span class="r">PROMPT</span><br><span class="g">ARSENAL</span>
+          </div>
+          <div class="home-subtitle">Curated for your actual hustles. No filler. No Excel hell. Just the prompts that move the needle — organized the way your brain actually works. 🤘</div>
+        </div>
+        <div class="home-floaters">
+          <span>🎸</span><span>🔥</span><span>⚡</span>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-lbl">Total Prompts</div>
+          <div class="stat-val" id="total-count">28</div>
+          <div class="stat-note">& growing</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-lbl">Categories</div>
+          <div class="stat-val">04</div>
+          <div class="stat-note">all fire</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-lbl">Hustles Covered</div>
+          <div class="stat-val">05</div>
+          <div class="stat-note">& counting</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-lbl">Useless Prompts</div>
+          <div class="stat-val">00</div>
+          <div class="stat-note">we cut 'em</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-lbl">Excel Files</div>
+          <div class="stat-val">RIP</div>
+          <div class="stat-note">never again</div>
+        </div>
+      </div>
+
+      <div class="callout red">
+        <span class="callout-ico">🎸</span>
+        <div class="callout-txt"><strong>How this works:</strong> Every prompt is tagged for your hustles — Music, Content, Brand, or Shop. Use the sidebar to browse by hustle or by category. Hit <code>+ Add Prompt</code> to drop in your own any time.</div>
+      </div>
+      <div class="callout gold">
+        <span class="callout-ico">💡</span>
+        <div class="callout-txt"><strong>Swap the brackets.</strong> Every <code>[bracketed section]</code> is yours to fill in. The more specific you are, the better the output. Garbage in, garbage out — as always.</div>
+      </div>
+
+      <div class="section-head">
+        <h2>📂 CATEGORIES</h2>
+        <div class="sh-line"></div>
+        <div class="sh-tag">Click to browse</div>
+      </div>
+
+      <div class="cat-overview">
+        <div class="cat-card wc" onclick="showView('writing')">
+          <div class="cc-count">7 prompts</div>
+          <div class="cc-icon">✍️</div>
+          <div class="cc-name">Writing &amp; Copy</div>
+          <div class="cc-desc">Captions, emails, sales copy, bios, newsletters, pitch decks — words that actually do a job.</div>
+        </div>
+        <div class="cat-card bs" onclick="showView('business')">
+          <div class="cc-count">7 prompts</div>
+          <div class="cc-icon">💼</div>
+          <div class="cc-name">Business &amp; Strategy</div>
+          <div class="cc-desc">Pricing, positioning, product launches, revenue planning, and the stuff nobody teaches you.</div>
+        </div>
+        <div class="cat-card lr" onclick="showView('learning')">
+          <div class="cc-count">7 prompts</div>
+          <div class="cc-icon">🧠</div>
+          <div class="cc-name">Learning &amp; Research</div>
+          <div class="cc-desc">Skill blueprints, deep dives, gap detectors, and roadmaps for learning anything on your own terms.</div>
+        </div>
+        <div class="cat-card cb" onclick="showView('creative')">
+          <div class="cc-count">7 prompts</div>
+          <div class="cc-icon">🎨</div>
+          <div class="cc-name">Creative &amp; Brainstorm</div>
+          <div class="cc-desc">Concept generation, ideas under pressure, creative briefs, and beating the blank page every time.</div>
+        </div>
+      </div>
+
+      <div class="section-head">
+        <h2>🎸 HUSTLE QUICK-LINKS</h2>
+        <div class="sh-line"></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px;">
+        <button class="filter-btn" onclick="showView('music')">🎸 Music / Tour</button>
+        <button class="filter-btn" onclick="showView('content')">🎬 Content Creation</button>
+        <button class="filter-btn" onclick="showView('brand')">🔥 Personal Brand</button>
+        <button class="filter-btn" onclick="showView('shop')">🛒 Gumroad / Notion / Etsy</button>
+        <button class="filter-btn" onclick="showView('all')">⚡ Show All</button>
+      </div>
+    </div>
+    <!-- /home -->
+
+    <!-- ─── WRITING & COPY VIEW ─── -->
+    <div class="view" id="view-writing">
+      <div class="section-head">
+        <h2>✍️ WRITING &amp; COPY</h2>
+        <div class="sh-line"></div>
+        <div class="sh-tag" style="color:var(--red);border-color:var(--red)">7 prompts</div>
+        <button class="expand-all-btn" onclick="expandAll('writing')">Expand All</button>
+      </div>
+
+      <div class="callout red">
+        <span class="callout-ico">✍️</span>
+        <div class="callout-txt"><strong>Words that work:</strong> These aren't generic "write me a caption" prompts. They're built for <em>your</em> voice — roadie-meets-entrepreneur, Sicilian-fire energy, real personality. Plug in your context and let it rip.</div>
+      </div>
+
+      <div class="filter-bar">
+        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-dim);">Filter by hustle:</span>
+        <button class="filter-btn active" onclick="filterCards('writing','all',this)">All</button>
+        <button class="filter-btn" onclick="filterCards('writing','music',this)">🎸 Music</button>
+        <button class="filter-btn" onclick="filterCards('writing','content',this)">🎬 Content</button>
+        <button class="filter-btn" onclick="filterCards('writing','brand',this)">🔥 Brand</button>
+        <button class="filter-btn" onclick="filterCards('writing','shop',this)">🛒 Shop</button>
+      </div>
+
+      <div class="prompt-grid" id="writing-cards">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+
+    <!-- ─── BUSINESS & STRATEGY VIEW ─── -->
+    <div class="view" id="view-business">
+      <div class="section-head">
+        <h2>💼 BUSINESS &amp; STRATEGY</h2>
+        <div class="sh-line"></div>
+        <div class="sh-tag" style="color:var(--gold);border-color:var(--gold)">7 prompts</div>
+        <button class="expand-all-btn" onclick="expandAll('business')">Expand All</button>
+      </div>
+
+      <div class="callout gold">
+        <span class="callout-ico">💼</span>
+        <div class="callout-txt"><strong>Money moves only.</strong> Pricing, positioning, launches, and the kind of strategic thinking that turns side hustles into actual income. <em>Brutally practical. No fluff.</em></div>
+      </div>
+
+      <div class="filter-bar">
+        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-dim);">Filter by hustle:</span>
+        <button class="filter-btn active" onclick="filterCards('business','all',this)">All</button>
+        <button class="filter-btn" onclick="filterCards('business','music',this)">🎸 Music</button>
+        <button class="filter-btn" onclick="filterCards('business','content',this)">🎬 Content</button>
+        <button class="filter-btn" onclick="filterCards('business','brand',this)">🔥 Brand</button>
+        <button class="filter-btn" onclick="filterCards('business','shop',this)">🛒 Shop</button>
+      </div>
+
+      <div class="prompt-grid" id="business-cards"></div>
+    </div>
+
+    <!-- ─── LEARNING & RESEARCH VIEW ─── -->
+    <div class="view" id="view-learning">
+      <div class="section-head">
+        <h2>🧠 LEARNING &amp; RESEARCH</h2>
+        <div class="sh-line"></div>
+        <div class="sh-tag" style="color:var(--teal);border-color:var(--teal)">7 prompts</div>
+        <button class="expand-all-btn" onclick="expandAll('learning')">Expand All</button>
+      </div>
+
+      <div class="callout teal">
+        <span class="callout-ico">🧠</span>
+        <div class="callout-txt"><strong>Learn faster. Miss less.</strong> These are the 7 prompts from the original arsenal — refined and tagged for your world. <em>Blueprint → Practice → Gap check → Roadmap. That's the chain.</em></div>
+      </div>
+
+      <div class="filter-bar">
+        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-dim);">Filter by hustle:</span>
+        <button class="filter-btn active" onclick="filterCards('learning','all',this)">All</button>
+        <button class="filter-btn" onclick="filterCards('learning','music',this)">🎸 Music</button>
+        <button class="filter-btn" onclick="filterCards('learning','content',this)">🎬 Content</button>
+        <button class="filter-btn" onclick="filterCards('learning','brand',this)">🔥 Brand</button>
+        <button class="filter-btn" onclick="filterCards('learning','shop',this)">🛒 Shop</button>
+      </div>
+
+      <div class="prompt-grid" id="learning-cards"></div>
+    </div>
+
+    <!-- ─── CREATIVE & BRAINSTORM VIEW ─── -->
+    <div class="view" id="view-creative">
+      <div class="section-head">
+        <h2>🎨 CREATIVE &amp; BRAINSTORM</h2>
+        <div class="sh-line"></div>
+        <div class="sh-tag" style="color:var(--purple);border-color:var(--purple)">7 prompts</div>
+        <button class="expand-all-btn" onclick="expandAll('creative')">Expand All</button>
+      </div>
+
+      <div class="callout purple">
+        <span class="callout-ico">🎨</span>
+        <div class="callout-txt"><strong>Break the blank page.</strong> Concept generation, creative briefs, idea pivots, naming, and the kind of brainstorming that actually goes somewhere. <em>Chaos with a point.</em></div>
+      </div>
+
+      <div class="filter-bar">
+        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-dim);">Filter by hustle:</span>
+        <button class="filter-btn active" onclick="filterCards('creative','all',this)">All</button>
+        <button class="filter-btn" onclick="filterCards('creative','music',this)">🎸 Music</button>
+        <button class="filter-btn" onclick="filterCards('creative','content',this)">🎬 Content</button>
+        <button class="filter-btn" onclick="filterCards('creative','brand',this)">🔥 Brand</button>
+        <button class="filter-btn" onclick="filterCards('creative','shop',this)">🛒 Shop</button>
+      </div>
+
+      <div class="prompt-grid" id="creative-cards"></div>
+    </div>
+
+    <!-- ─── ALL PROMPTS VIEW ─── -->
+    <div class="view" id="view-all">
+      <div class="section-head">
+        <h2>⚡ ALL PROMPTS</h2>
+        <div class="sh-line"></div>
+        <div class="sh-count" id="all-count-label">28 total</div>
+        <button class="expand-all-btn" onclick="expandAll('all')">Expand All</button>
+      </div>
+      <div class="prompt-grid" id="all-cards"></div>
+    </div>
+
+    <!-- ─── HUSTLE VIEWS ─── -->
+    <div class="view" id="view-music">
+      <div class="section-head">
+        <h2>🎸 MUSIC / TOUR / LIVE</h2>
+        <div class="sh-line"></div>
+        <div class="sh-tag" style="color:var(--gold);border-color:var(--gold)">Your wheelhouse</div>
+      </div>
+      <div class="callout gold">
+        <span class="callout-ico">🎸</span>
+        <div class="callout-txt"><strong>Tour life meets AI:</strong> Prompts tagged for the music industry — from writing tour announcements and rider docs to pitching venues and building your production brand. <em>Road-tested. Rosie-approved.</em></div>
+      </div>
+      <div class="prompt-grid" id="music-cards"></div>
+    </div>
+
+    <div class="view" id="view-content">
+      <div class="section-head">
+        <h2>🎬 CONTENT CREATION</h2>
+        <div class="sh-line"></div>
+        <div class="sh-tag" style="color:var(--teal);border-color:var(--teal)">Make the thing</div>
+      </div>
+      <div class="callout teal">
+        <span class="callout-ico">🎬</span>
+        <div class="callout-txt"><strong>Content that converts:</strong> Scripts, hooks, post ideas, repurposing strategies — prompts for the whole content machine. <em>Built for people who have something real to say.</em></div>
+      </div>
+      <div class="prompt-grid" id="content-cards"></div>
+    </div>
+
+    <div class="view" id="view-brand">
+      <div class="section-head">
+        <h2>🔥 PERSONAL BRAND / SOCIAL</h2>
+        <div class="sh-line"></div>
+        <div class="sh-tag" style="color:var(--red);border-color:var(--red)">Be unforgettable</div>
+      </div>
+      <div class="callout red">
+        <span class="callout-ico">🔥</span>
+        <div class="callout-txt"><strong>Your brand is your reputation with WiFi:</strong> Bios, positioning, origin stories, LinkedIn bangers, audience-building — prompts for making sure people know who you are and why it matters.</div>
+      </div>
+      <div class="prompt-grid" id="brand-cards"></div>
+    </div>
+
+    <div class="view" id="view-shop">
+      <div class="section-head">
+        <h2>🛒 GUMROAD / NOTION / ETSY</h2>
+        <div class="sh-line"></div>
+        <div class="sh-tag" style="color:var(--orange);border-color:var(--orange)">Build the systems</div>
+      </div>
+      <div class="callout" style="background:var(--ora-dim);border-color:var(--orange);border-left:3px solid var(--orange);">
+        <span class="callout-ico">🛒</span>
+        <div class="callout-txt"><strong>Digital products &amp; passive income:</strong> Product descriptions, Notion template copy, Etsy listings, launch sequences, and pricing strategy — prompts for turning your systems into revenue.</div>
+      </div>
+      <div class="prompt-grid" id="shop-cards"></div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ══════════════════════════════════════════
+     ADD PROMPT MODAL
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-title">➕ ADD NEW PROMPT</div>
+    <div class="modal-row">
+      <div class="modal-lbl">Prompt Title</div>
+      <input class="modal-input" id="m-title" placeholder="Give it a badass name..." type="text">
+    </div>
+    <div class="modal-row">
+      <div class="modal-lbl">Subtitle / tagline (optional)</div>
+      <input class="modal-input" id="m-sub" placeholder="One-line description..." type="text">
+    </div>
+    <div class="modal-row">
+      <div class="modal-lbl">The Prompt</div>
+      <textarea class="modal-textarea" id="m-prompt" placeholder='Paste your prompt here. Use [brackets] for variables...'></textarea>
+    </div>
+    <div class="modal-row">
+      <div class="modal-lbl">Why it works (optional)</div>
+      <input class="modal-input" id="m-why" placeholder="What makes this prompt useful?" type="text">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="modal-row">
+        <div class="modal-lbl">Category</div>
+        <select class="modal-select" id="m-cat">
+          <option value="wc">✍️ Writing &amp; Copy</option>
+          <option value="bs">💼 Business &amp; Strategy</option>
+          <option value="lr">🧠 Learning &amp; Research</option>
+          <option value="cb">🎨 Creative &amp; Brainstorm</option>
+        </select>
+      </div>
+      <div class="modal-row">
+        <div class="modal-lbl">Hustle Tag</div>
+        <select class="modal-select" id="m-hustle">
+          <option value="all">⚡ All Hustles</option>
+          <option value="music">🎸 Music / Tour</option>
+          <option value="content">🎬 Content Creation</option>
+          <option value="brand">🔥 Personal Brand</option>
+          <option value="shop">🛒 Gumroad / Etsy</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-lbl">Emoji Icon</div>
+      <input class="modal-input" id="m-emoji" placeholder="e.g. 🔥" type="text" style="width:80px;">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="addPrompt()">Save Prompt 🔥</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   DATA
+══════════════════════════════════════════ */
+const PROMPTS = [
+  // ── WRITING & COPY ──────────────────────
+  {id:1,cat:'wc',hustle:'brand',emoji:'🎤',title:'The Anti-Generic Bio',sub:'Sound like you, not a LinkedIn robot',
+   prompt:`Write a professional bio for me that doesn't sound like everyone else's. I'm [name], a [role/profession] with a background in [your background]. My personality is [describe: e.g. direct, dark humor, passionate, unconventional]. My audience is [who you're talking to]. Write 3 versions: one for Instagram (under 150 chars), one for a website About page (150–200 words), and one for a press kit (100 words, third person). No clichés. No "passionate about" or "dedicated to." Make it sound like a real human.`,
+   why:`Generic bios blend into the wall. This forces voice-first writing with actual personality — the kind people actually read.`},
+
+  {id:2,cat:'wc',hustle:'content',emoji:'🪝',title:'The Hook Machine',sub:'Stop the scroll in 3 seconds or die',
+   prompt:`Write 10 scroll-stopping opening hooks for [platform: TikTok/Instagram/LinkedIn] about [topic/content idea]. My niche is [your niche]. My audience struggles with [their pain point]. Use a mix of: a bold statement, a counterintuitive claim, a "they won't tell you" angle, a personal story opener, and a "what if" scenario. Short, punchy, no fluff. I'll pick the one that hits hardest.`,
+   why:`The hook is 80% of the battle. 10 options means you always have something strong to work with instead of agonizing over one.`},
+
+  {id:3,cat:'wc',hustle:'shop',emoji:'💸',title:'Product Description That Actually Sells',sub:'Make them want it before they finish reading',
+   prompt:`Write a compelling product description for my [Gumroad/Etsy/Notion] product: [product name]. It's a [what it is]. The buyer is [who they are]. Their biggest frustration before finding this is [frustration]. After using it, they feel [transformation]. Price point: [price]. Tone: [your brand tone]. Include: a punchy headline, 3–4 benefit bullets (outcome-focused, not feature-focused), a short story or scenario they'll recognize, and a clear call to action. No hype. No empty promises.`,
+   why:`Features don't sell. Outcomes do. This prompt forces benefit-first, outcome-driven copy that connects before it pitches.`},
+
+  {id:4,cat:'wc',hustle:'music',emoji:'🎸',title:'Tour Announcement Copy',sub:'Get people off the couch and into the venue',
+   prompt:`Write a tour announcement for [artist/act name] for [platform: social/email/press release]. Tour name: [if applicable]. Dates: [date range]. Key cities: [list]. Ticket link: [link or TBD]. Vibe of the show: [describe the energy, genre, production]. Target audience: [fans of what / who]. Write 3 versions: a punchy social caption (under 200 chars), a full social post with details (300–400 words), and a short press release opener (150 words). High energy. Visceral. Makes people feel like missing it would be a crime.`,
+   why:`Tour announcements are boring by default. This generates copy that matches the actual energy of live music.`},
+
+  {id:5,cat:'wc',hustle:'content',emoji:'📧',title:'Email Subject Line Blitz',sub:'30% open rate or we riot',
+   prompt:`Generate 15 email subject lines for [email topic/campaign]. My audience is [describe]. The email goal is [what you want them to do]. Use a mix of: curiosity gaps, bold statements, personal + direct, humor, urgency, and one controversial take. Flag which ones are best for cold audiences vs. warm. Keep each under 50 characters where possible.`,
+   why:`Nobody opens boring subject lines. 15 options with flagged audience notes makes testing actually useful.`},
+
+  {id:6,cat:'wc',hustle:'brand',emoji:'💬',title:'Brand Voice Bible',sub:'Consistency is the unfair advantage',
+   prompt:`Help me define my brand voice. Here's what I do: [what you do and for who]. My personality: [adjectives: e.g. direct, funny, no-nonsense, warm]. What I sound like: [reference a person, show, or vibe]. What I don't sound like: [anti-examples]. Audience: [who they are]. Create a brand voice guide with: 5 voice characteristics with do/don't examples, 3 words I should use often, 3 phrases to retire forever, and a one-sentence "we sound like ___" description. Make it tight. I should be able to share this with a ghostwriter and they'd nail my voice.`,
+   why:`A brand voice guide is the single most underused asset for solopreneurs. This makes it impossible to sound inconsistent.`},
+
+  {id:7,cat:'wc',hustle:'shop',emoji:'📦',title:'Notion Template Sales Page',sub:'Sell the system, not the spreadsheet',
+   prompt:`Write a sales page for my Notion template called [template name]. It helps [target user] accomplish [outcome] without [pain it eliminates]. The template includes: [list main sections or features]. Price: [price]. Ideal buyer: [describe in detail]. Write in this order: headline (outcome-focused), a "you know this feeling" opening paragraph they'll recognize, what's inside (outcome-framed bullets), who it's for + who it's NOT for, a brief about-me line, FAQ (3–4 questions), and a closing CTA. Tone: [your brand voice]. No fluff. No fake scarcity.`,
+   why:`Notion templates sell on trust and clarity. This structure hits every psychological trigger without resorting to sleazy copy tactics.`},
+
+  // ── BUSINESS & STRATEGY ─────────────────
+  {id:8,cat:'bs',hustle:'shop',emoji:'💰',title:'Pricing Strategy Audit',sub:"You're probably undercharging. Let's fix that.",
+   prompt:`Help me audit my pricing for [product/service name]. Here's what it is: [description]. Here's what it currently costs: [price]. Here's what my competitors charge: [range]. Here's the transformation or outcome it delivers: [describe]. Here's my current customer: [describe]. Run me through: whether I'm under/over-priced and why, what pricing psychology I should be using, whether I should offer tiers (and what they'd look like), and what I need to change in my positioning to justify a higher price. Be direct. Give me actual numbers and recommendations, not just frameworks.`,
+   why:`Most creators chronically underprice. This forces a hard look at the math AND the positioning holding you back.`},
+
+  {id:9,cat:'bs',hustle:'brand',emoji:'🎯',title:'Positioning Statement Builder',sub:'Why you and not them — in one sentence',
+   prompt:`Help me write a sharp positioning statement for my personal brand / business. Here's what I do: [description]. Here's who I serve: [target audience]. Here's what makes me different: [differentiators]. Here's what my audience desperately wants: [desire]. Here's what they're afraid of: [fear]. Write 5 positioning statement options in this format: "I help [who] achieve [outcome] without [obstacle], unlike [alternative] which [limitation]." Then pick the strongest one and explain why.`,
+   why:`Vague positioning is invisible positioning. This forces specificity that actually sticks in someone's memory.`},
+
+  {id:10,cat:'bs',hustle:'shop',emoji:'🚀',title:'Product Launch Sequence',sub:'7 days. Build anticipation. Make the sale.',
+   prompt:`Design a 7-day launch sequence for my [product type: digital template / course / service]. Product: [name + one-line description]. Price: [price]. Audience size: [approx. email list or social following]. Platform: [email / social / both]. Goal: [number of sales or revenue target]. For each of the 7 days give me: the day's goal, the content format (email, post, story, etc.), the key message or angle, and a short sample opening line. Build the anticipation arc from "something's coming" to "doors open" to "last chance." Tone: [your brand voice].`,
+   why:`Launches without sequences leave money on the table. This maps the full emotional arc so you're not winging it day by day.`},
+
+  {id:11,cat:'bs',hustle:'music',emoji:'🎪',title:'Festival / Venue Pitch',sub:'Get the gig. Get paid.',
+   prompt:`Write a professional pitch for [artist/production company name] to [festival name / venue / event organizer]. We're pitching: [what you're offering — act, production services, etc.]. Our background: [relevant experience, credits, notable shows]. Why we're right for this: [specific fit to their audience/brand]. What we're asking for: [fee range, terms, dates]. Tone: confident but not arrogant. Professional but not stiff. Include: a subject line for the email, a 3-paragraph pitch body, a brief bullet list of credentials, and a clear next step CTA. Sound like a pro who's done this a hundred times.`,
+   why:`Weak pitches get ghosted. This structures the pitch like a pro package — credentials up front, clear ask, easy next step.`},
+
+  {id:12,cat:'bs',hustle:'content',emoji:'📊',title:'Content Monetization Roadmap',sub:'Turn your audience into actual income',
+   prompt:`Help me build a content monetization plan. My platform(s): [list]. Current following: [approximate size]. Content niche: [describe]. Existing income from content: [current state]. Skills and assets I have: [list what you can offer — digital products, services, expertise, access]. Build me a tiered monetization roadmap: what I can start doing now with no audience minimum, what I should build toward at [X followers/subscribers], and what the long-term 5-figure-month version looks like. For each tier give me 2–3 specific revenue streams that fit my niche. Be specific — no generic "sell a course" advice.`,
+   why:`Most content creators have no monetization strategy — just vibes. This builds a real revenue ladder from where you are right now.`},
+
+  {id:13,cat:'bs',hustle:'brand',emoji:'🤝',title:'Collaboration Pitch Template',sub:'How to slide into DMs like a professional',
+   prompt:`Write a collaboration pitch for me to send to [type of person: brand, creator, venue, podcast host, etc.]. My name/brand: [name]. What I do: [description]. Why I want to work with them: [specific reason related to their work]. What I'm proposing: [type of collab]. What's in it for them: [be specific]. My relevant credentials: [brief]. Keep it under 150 words. No ass-kissing opener. No "I've been following you for years." Just: who I am, why I'm reaching out, what I'm proposing, and one clear next step. Write 2 versions: one for cold outreach, one for a warm connection.`,
+   why:`Most collab pitches are way too long and way too needy. Short, specific, and benefit-forward wins every time.`},
+
+  {id:14,cat:'bs',hustle:'shop',emoji:'📈',title:'Revenue Forecast & Goal Reverse-Engineer',sub:'Work backwards from the number that matters',
+   prompt:`Help me reverse-engineer a revenue goal. My goal: [$X] per month from [product/service type]. My product price: [$Y]. Current conversion rate (if known): [%] or assume industry standard. Current audience size: [email list / social following / monthly traffic]. Walk me through: how many sales I need per month, how many leads I need to generate that many sales, what traffic or outreach volume that requires, and the 3 biggest levers I can pull to hit this goal faster. Then give me a 90-day action plan with the most important weekly tasks. Be ruthlessly practical.`,
+   why:`Most goal-setting is wishful thinking. This forces the math first, then builds the plan backwards from a real number.`},
+
+  // ── LEARNING & RESEARCH ─────────────────
+  {id:15,cat:'lr',hustle:'all',emoji:'🗺️',title:'Skill Deconstruction Blueprint',sub:'Map the terrain before you move a single case',
+   prompt:`Act as an expert mentor in [skill/topic]. Break this skill down into its fundamental components and subskills. Identify what truly matters for real-world competence versus what is optional or advanced. Then design a logical progression for mastering it from beginner to proficient. Include common misconceptions and mistakes beginners make. Assume I can dedicate [X hours per week] and want to reach [specific goal or level]. Keep the plan practical and focused on application, not theory.`,
+   why:`Most learning fails because people never map the territory. This forces a blueprint before you build — no pro starts a tour without a production rider.`},
+
+  {id:16,cat:'lr',hustle:'all',emoji:'⚡',title:'The 80/20 Learning Filter',sub:'Cut the fat. Keep the muscle.',
+   prompt:`Help me apply the 80/20 principle to learning [skill/topic]. Identify the small number of concepts, techniques, or exercises that produce the majority of real-world results. Clearly separate essential knowledge from nice-to-know information. Then suggest a focused study and practice approach that prioritizes high-impact areas first.`,
+   why:`A 47-piece backline doesn't mean 47 things need your attention. Two of those things matter. This prompt finds them.`},
+
+  {id:17,cat:'lr',hustle:'all',emoji:'🏋️',title:'Active Practice Designer',sub:'Reps over reading. Always.',
+   prompt:`Design deliberate practice exercises for improving my ability in [skill/topic]. My current level is [beginner/intermediate/advanced]. Create practical exercises that simulate real-world application, increase difficulty gradually, and include feedback criteria so I can measure improvement. Avoid passive learning suggestions and focus on doing, not consuming.`,
+   why:`Nobody learned to drive by watching Fast & Furious. Get in the car. This builds the drills that build the muscle memory.`},
+
+  {id:18,cat:'lr',hustle:'all',emoji:'🎓',title:'Personal Tutor Mode',sub:'One-on-one. No ego. No upsell.',
+   prompt:`Act as my personal tutor for [skill/topic]. Teach me one key concept at a time in a clear and practical way. After explaining, ask me questions or give a short exercise to test my understanding. Adjust difficulty based on my responses. Focus on building deep understanding instead of surface memorization.`,
+   why:`One-way lectures are for people who can't ask questions. This turns it into a conversation. The best learning happens in the room, not from the nosebleeds.`},
+
+  {id:19,cat:'lr',hustle:'content',emoji:'🌍',title:'Industry Deep Dive',sub:'Know your space better than anyone in it',
+   prompt:`I want to deeply understand [industry/niche: e.g. creator economy, live event production, digital products]. Give me: the current state of this industry in 2025–2026 (key trends, shifts, and tensions), the top 5 players and what makes them dominant, where the underserved opportunities are, the vocabulary and terminology I need to know to sound credible, and the 3 biggest mistakes outsiders make when entering this space. Assume I'm smart but new to this specific industry. Be specific. No surface-level Wikipedia answers.`,
+   why:`You can't compete in a space you don't understand. This builds fluency fast — the kind that earns respect in the room.`},
+
+  {id:20,cat:'lr',hustle:'all',emoji:'🔍',title:'Knowledge Gap Detector',sub:'Find your blind spots before they find you.',
+   prompt:`Based on my goal of achieving [specific outcome] in [skill/topic], identify what I likely misunderstand or underestimate at my current level: [describe current understanding]. Point out blind spots, missing fundamentals, or overcomplicated areas. Then suggest corrections or clarifications.`,
+   why:`Everyone thinks they know what they don't know. They don't. Run this every two weeks and enjoy the productive humbling.`},
+
+  {id:21,cat:'lr',hustle:'all',emoji:'🚀',title:'Compressed Learning Roadmap',sub:'30 days. No detours. No mercy.',
+   prompt:`Create a focused [30/60/90]-day roadmap to reach [specific goal] in [skill/topic]. Structure it by weeks, combining learning, practice, and review. Emphasize consistency, feedback loops, and progressive complexity. Avoid overwhelming volume and prioritize realistic, sustainable growth.`,
+   why:`A goal without a timeline is just a wish. This turns the noise into a setlist you can actually play.`},
+
+  // ── CREATIVE & BRAINSTORM ────────────────
+  {id:22,cat:'cb',hustle:'content',emoji:'💡',title:'Content Idea Avalanche',sub:'100 ideas in 20 minutes. Pick the gold.',
+   prompt:`Generate 20 content ideas for [platform] about [your niche/topic]. My audience is [describe]. Their biggest struggle is [pain point]. My content style is [describe: educational, entertaining, behind-the-scenes, opinion, etc.]. For each idea give me: the format (video, carousel, post, reel, etc.), a working title or hook, and the core angle or takeaway. Flag the 5 you think are strongest and explain why. Go for range — some safe bets, some bold swings, at least 2 that feel uncomfortably honest.`,
+   why:`Content blocks come from generating one idea at a time. 20 at once with format and angle included makes the calendar fill itself.`},
+
+  {id:23,cat:'cb',hustle:'shop',emoji:'🧩',title:'Product Idea Generator',sub:'What should you build next?',
+   prompt:`Help me brainstorm digital product ideas for [platform: Gumroad / Etsy / Notion]. My niche: [describe]. My audience's top 3 frustrations: [list them]. My existing skills and knowledge: [list]. Price range I'm targeting: [$X–$Y]. Generate 10 product ideas — include the product name, what it is in one sentence, who it's for, and why someone would pay for it right now. Flag the 3 with the best market fit and explain your reasoning. Be specific — "a Notion template for freelancers" isn't specific. "A Notion client onboarding system for solo copywriters" is.`,
+   why:`Vague product ideas never get built. This forces specificity at the ideation stage so you're not pivoting after you've built the whole thing.`},
+
+  {id:24,cat:'cb',hustle:'brand',emoji:'🎭',title:'Brand Story Excavator',sub:'Your origin story is your unfair advantage',
+   prompt:`Help me find and shape my brand origin story. Answer these questions about me: [fill in as you go]. Profession/what I do: []. How I got here: [the non-obvious path]. The moment I knew this was right: []. What I failed at or almost quit: []. What makes my background weird or unconventional: []. My actual personality: []. Now, craft 3 versions of my origin story: one for a 60-second intro (conversational), one for an About page (3 paragraphs, written in 2nd/3rd person), and one as a LinkedIn-style story post. Make it feel real, not polished. The messiness is the point.`,
+   why:`People buy from people they recognize. The mess in your story is what makes you memorable — this helps you weaponize it.`},
+
+  {id:25,cat:'cb',hustle:'music',emoji:'🎪',title:'Show Concept Creator',sub:'Give them something they\'ve never seen',
+   prompt:`Help me brainstorm a concept for [type of show/event: concert, festival stage, production design, etc.]. Artist/act: [name]. Music genre/vibe: [describe]. Target venue size: [intimate / club / theater / arena]. Budget tier: [shoestring / mid / high production]. What we want the audience to FEEL: [describe the emotional arc]. What we want them to REMEMBER: [the one image or moment]. Generate 5 distinct show concepts — for each give it a name, describe the visual aesthetic, the standout production element, and the emotional peak moment. Then pick the strongest one and go deeper on execution ideas.`,
+   why:`Production design starts with a concept, not a gear list. This generates direction before budget — the right order of operations.`},
+
+  {id:26,cat:'cb',hustle:'content',emoji:'🔄',title:'Content Repurposing Machine',sub:'One piece. Ten formats. Zero waste.',
+   prompt:`I have this piece of content: [paste or describe your original piece]. It was originally created for: [platform]. Help me repurpose it into 8 different formats: a short-form video script (60 sec), a Twitter/X thread (5–7 tweets), an Instagram carousel (5 slides with headlines + copy), a LinkedIn post, a newsletter intro section, a short blog post intro (150 words), 3 story frames for Instagram/TikTok, and a pull-quote graphic text. Keep my original voice intact. Don't water it down or make it generic. The goal is maximum reach from one idea.`,
+   why:`Creating from scratch every day is how creators burn out. This extracts every drop of value from one strong idea.`},
+
+  {id:27,cat:'cb',hustle:'brand',emoji:'🏷️',title:'Name & Tagline Workshop',sub:'What do you want to be called when you\'re famous?',
+   prompt:`Help me name [my brand / product / series / offer]. Here's what it is: [description]. Here's who it's for: [target audience]. Here's the feeling I want it to evoke: [emotions/vibes]. Here's what it should NOT sound like: [anti-examples]. Generate 15 name options across these styles: straightforward/descriptive (3), unexpected/abstract (4), personality-led (3), alliterative or phonetically strong (3), and one provocative wild card (2). For each, add a one-line tagline option. Then rate the top 5 on memorability, domain-friendliness, and brand fit (1–10 each).`,
+   why:`Naming is the creative decision that outlasts everything else. This systematically covers every angle so you're not just picking what sounds cool in the moment.`},
+
+  {id:28,cat:'cb',hustle:'shop',emoji:'🗂️',title:'Notion Template Architecture',sub:'Build the system before you build the system',
+   prompt:`Help me design the architecture for a Notion template called [working title]. It's for [target user] who wants to [outcome]. Their current workflow pain: [describe the mess they're in]. What they need to track or manage: [list]. Their technical comfort level with Notion: [beginner / intermediate / power user]. Design the full template structure: main database(s) and their properties, linked views (filtered, sorted, by what), navigation structure (how they'll move through it), any automations or formulas to suggest, and the onboarding instructions page outline. Think UX-first. It should feel obvious to use on day one.`,
+   why:`Most Notion templates are built by power users for power users and then sell terribly. This designs for the actual user first — which is how you get 5-star reviews.`}
+];
+
+/* ══════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════ */
+const CAT_MAP = {wc:'writing', bs:'business', lr:'learning', cb:'creative'};
+const HUSTLE_LABELS = {music:'tag-music',content:'tag-content',brand:'tag-brand',shop:'tag-shop',all:'tag-all'};
+const HUSTLE_NAMES  = {music:'🎸 Music',content:'🎬 Content',brand:'🔥 Brand',shop:'🛒 Shop',all:'⚡ All'};
+
+function renderCard(p, idx, viewKey) {
+  const uid = `${viewKey}-p${p.id}`;
+  return `
+  <div class="p-card ${p.cat}" data-hustle="${p.hustle}" data-id="${p.id}" id="${uid}">
+    <div class="p-header" onclick="toggleCard('${uid}')">
+      <div class="p-num">${String(idx+1).padStart(2,'0')}</div>
+      <div class="p-meta">
+        <div class="p-title"><span class="p-emoji">${p.emoji}</span> ${escHtml(p.title)}</div>
+        <div class="p-sub">${escHtml(p.sub)}</div>
+      </div>
+      <div class="p-tags">
+        <span class="p-tag ${HUSTLE_LABELS[p.hustle]}">${HUSTLE_NAMES[p.hustle]}</span>
+      </div>
+      <div class="p-toggle">▼</div>
+    </div>
+    <div class="p-body">
+      <div class="prompt-lbl">⌨️ The Prompt</div>
+      <div class="prompt-box" id="pb-${uid}">${formatPrompt(p.prompt)}<button class="copy-btn" onclick="copyPrompt('pb-${uid}',this)">📋 Copy</button></div>
+      ${p.why ? `<div class="why-row"><span class="why-tag">Why it hits</span><span class="why-txt">${escHtml(p.why)}</span></div>` : ''}
+    </div>
+  </div>`;
+}
+
+function formatPrompt(text) {
+  return escHtml(text).replace(/\[([^\]]+)\]/g,'<span class="bracket">[$1]</span>');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderAll() {
+  // by category
+  ['writing','business','learning','creative'].forEach(view => {
+    const cat = Object.keys(CAT_MAP).find(k=>CAT_MAP[k]===view);
+    const list = PROMPTS.filter(p=>p.cat===cat);
+    document.getElementById(`${view}-cards`).innerHTML = list.map((p,i)=>renderCard(p,i,view)).join('');
+  });
+  // all prompts
+  document.getElementById('all-cards').innerHTML = PROMPTS.map((p,i)=>renderCard(p,i,'all')).join('');
+  document.getElementById('all-count-label').textContent = `${PROMPTS.length} total`;
+  // hustle views
+  ['music','content','brand','shop'].forEach(h=>{
+    const list = PROMPTS.filter(p=>p.hustle===h||p.hustle==='all');
+    document.getElementById(`${h}-cards`).innerHTML = list.length
+      ? list.map((p,i)=>renderCard(p,i,h)).join('')
+      : `<div class="no-results">No prompts tagged for this hustle yet. Add some! 🔥</div>`;
+  });
+  // total count
+  document.getElementById('total-count').textContent = PROMPTS.length;
+}
+
+/* ══════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════ */
+const PAGE_NAMES = {
+  home:'Dashboard Home', all:'All Prompts',
+  writing:'Writing & Copy', business:'Business & Strategy',
+  learning:'Learning & Research', creative:'Creative & Brainstorm',
+  music:'Music / Tour', content:'Content Creation',
+  brand:'Personal Brand', shop:'Gumroad / Notion / Etsy'
+};
+
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById(`view-${name}`).classList.add('active');
+  document.getElementById('topbar-page').textContent = PAGE_NAMES[name]||name;
+  document.getElementById('searchInput').value = '';
+  window.scrollTo({top:0,behavior:'smooth'});
+  return false;
+}
+
+/* ══════════════════════════════════════════
+   TOGGLE CARDS
+══════════════════════════════════════════ */
+function toggleCard(uid) {
+  const card = document.getElementById(uid);
+  const tog  = card.querySelector('.p-toggle');
+  card.classList.toggle('open');
+  tog.textContent = card.classList.contains('open') ? '▲' : '▼';
+}
+
+function expandAll(view) {
+  const grid = document.getElementById(`${view}-cards`);
+  const cards = grid.querySelectorAll('.p-card');
+  const allOpen = [...cards].every(c=>c.classList.contains('open'));
+  const btn = grid.closest('.view')?.querySelector('.expand-all-btn');
+  cards.forEach(c=>{
+    const tog = c.querySelector('.p-toggle');
+    if(allOpen){c.classList.remove('open');tog.textContent='▼';}
+    else{c.classList.add('open');tog.textContent='▲';}
+  });
+  if(btn) btn.textContent = allOpen ? 'Expand All' : 'Collapse All';
+}
+
+/* ══════════════════════════════════════════
+   FILTER BY HUSTLE
+══════════════════════════════════════════ */
+function filterCards(view, hustle, btn) {
+  const grid = document.getElementById(`${view}-cards`);
+  grid.querySelectorAll('.p-card').forEach(c=>{
+    const h = c.dataset.hustle;
+    c.style.display = (hustle==='all' || h===hustle || h==='all') ? '' : 'none';
+  });
+  const bar = btn.closest('.filter-bar');
+  bar.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ══════════════════════════════════════════
+   SEARCH
+══════════════════════════════════════════ */
+function searchPrompts(q) {
+  if(!q.trim()) { showView('all'); return; }
+  showView('all');
+  const lower = q.toLowerCase();
+  document.querySelectorAll('#all-cards .p-card').forEach(c=>{
+    const text = c.innerText.toLowerCase();
+    c.style.display = text.includes(lower) ? '' : 'none';
+  });
+}
+
+/* ══════════════════════════════════════════
+   COPY
+══════════════════════════════════════════ */
+function copyPrompt(id, btn) {
+  const box = document.getElementById(id);
+  const clone = box.cloneNode(true);
+  clone.querySelectorAll('button').forEach(b=>b.remove());
+  clone.querySelectorAll('.bracket').forEach(b=>{b.outerHTML=b.textContent;});
+  // re-query after DOM mutation
+  const text = clone.innerText.trim();
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='✅ Copied!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 Copy';btn.classList.remove('copied');},2000);
+  });
+}
+
+/* ══════════════════════════════════════════
+   ADD PROMPT MODAL
+══════════════════════════════════════════ */
+function openModal(){ document.getElementById('modal').classList.add('open'); }
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+function closeModalOutside(e){ if(e.target===document.getElementById('modal')) closeModal(); }
+
+function addPrompt() {
+  const title  = document.getElementById('m-title').value.trim();
+  const prompt = document.getElementById('m-prompt').value.trim();
+  if(!title||!prompt){alert('Need at least a title and prompt, babe 🔥');return;}
+  const newP = {
+    id: Date.now(),
+    cat:    document.getElementById('m-cat').value,
+    hustle: document.getElementById('m-hustle').value,
+    emoji:  document.getElementById('m-emoji').value||'🔥',
+    title,
+    sub:    document.getElementById('m-sub').value||'Custom prompt',
+    prompt,
+    why:    document.getElementById('m-why').value||''
+  };
+  PROMPTS.push(newP);
+  renderAll();
+  closeModal();
+  // clear form
+  ['m-title','m-sub','m-prompt','m-why','m-emoji'].forEach(id=>document.getElementById(id).value='');
+  // navigate to the right category
+  showView(CAT_MAP[newP.cat]);
+}
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+renderAll();
+</script>
+</body>
+</html>
